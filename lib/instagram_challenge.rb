@@ -7,20 +7,20 @@ class InstagramChallenge
     @outputLocation = "rearranged.png"
   end
 
-  def setOutputLocation(location)
+  def set_output_location(location)
     @outputLocation = location
   end
 
-  def calculateColumns()
-    calculateColumnWidths()
-    calculateColumnsFromWidths(@columnWidths)
+  def calculate_columns()
+    calculate_column_widths()
+    calculate_columns_from_widths(@columnWidths)
   end
 
-  def calculateColumnWidths()
+  def calculate_column_widths()
     @columnWidths = Array.new(20, 32)
   end
 
-  def calculateColumnsFromWidths(columnWidths)
+  def calculate_columns_from_widths(columnWidths)
     @leftXs = []
     @rightXs = []
     leftX = 0
@@ -37,15 +37,15 @@ class InstagramChallenge
     @image.save @outputLocation
   end
 
-  def swapColumns(first, second)
+  def swap_columns(first, second)
     (0...@image.height).each do |y|
-      @image.swapPixels(first, y, second, y)
+      @image.swap_pixels(first, y, second, y)
     end
   end
 
-  def diffPixels(x1, y1, x2, y2)
-    first = @image.getPixelValue(x1, y1)
-    second = @image.getPixelValue(x2, y2)
+  def diff_pixels(x1, y1, x2, y2)
+    first = @image.get_pixel_value(x1, y1)
+    second = @image.get_pixel_value(x2, y2)
     diff = 0
     (0...first.length).each do |index|
       diff += (first[index] - second[index]).abs
@@ -53,29 +53,29 @@ class InstagramChallenge
     return diff
   end
 
-  def diffColumns(x1, x2)
+  def diff_columns(x1, x2)
     diff = 0
     (0...@image.height).each do |y|
-      diff += diffPixels(x1, y, x2, y)
+      diff += diff_pixels(x1, y, x2, y)
     end
     return diff
   end
 
-  def averageOf2DiffColumns(x1, x2)
+  def average_of_2_diff_columns(x1, x2)
     diff = 0
     (0...(@image.height - 1)).each do |y|
-      diff += diffPixels(x1, y, x2, y)
+      diff += diff_pixels(x1, y, x2, y)
     end
     return diff
   end
 
-  def averageOf2DiffPixels(x1, y1, x2, y2)
-    first1 = @image.getPixelValue(x1, y1)
-    first2 = @image.getPixelValue(x1 + 1, y1)
-    firstAverage = average2PixelValues(first1, first2)
-    second1 = @image.getPixelValue(x2, y2)
-    second2 = @image.getPixelValue(x2 + 1, y2)
-    secondAverage = average2PixelValues(second1, second2)
+  def average_of_2_diff_pixels(x1, y1, x2, y2)
+    first1 = @image.get_pixel_value(x1, y1)
+    first2 = @image.get_pixel_value(x1 + 1, y1)
+    firstAverage = average_2_pixels_values(first1, first2)
+    second1 = @image.get_pixel_value(x2, y2)
+    second2 = @image.get_pixel_value(x2 + 1, y2)
+    secondAverage = average_2_pixels_values(second1, second2)
     diff = 0
     (0...firstAverage.length).each do |index|
       diff += (firstAverage[index] - secondAverage[index]).abs
@@ -83,7 +83,7 @@ class InstagramChallenge
     return diff
   end
 
-  def average2PixelValues(value1, value2)
+  def average_2_pixels_values(value1, value2)
     averageValue = []
     (0..value1.length).each do |index|
       averageValue.push((value1[index] + value2[index]) / 2)
@@ -91,30 +91,30 @@ class InstagramChallenge
     return averageValue
   end
 
-  def smoothChangeDiffColumns(left, right)
+  def smooth_changed_diff_columns(left, right)
     diff = 0
     (0...@image.height).each do |y|
-      diff += smoothChangeDiffPixels(left, y, right, y)
+      diff += smooth_changed_diff_pixels(left, y, right, y)
     end
     return diff
   end
 
-  def smoothChangeDiffPixels(left, y1, right, y2)
-    leftChange = diffPixels(left, y1, left+1, y1)
-    rightToLeftChange = diffPixels(left, y1, right, y2)
+  def smooth_changed_diff_pixels(left, y1, right, y2)
+    leftChange = diff_pixels(left, y1, left+1, y1)
+    rightToLeftChange = diff_pixels(left, y1, right, y2)
     return (leftChange - rightToLeftChange).abs
   end
 
-  def underThresholdDiffColumns(left, right)
+  def under_threshold_diff_columns(left, right)
     diff = 0
     (0...@image.height).each do |y|
-      diff += underThresholdDiffPixels(left, y, right, y)
+      diff += under_threshold_diff_pixels(left, y, right, y)
     end
     return diff
   end
 
-  def underThresholdDiffPixels(left, y1, right, y2)
-    if (diffPixels(left, y1, right, y2) < 30)
+  def under_threshold_diff_pixels(left, y1, right, y2)
+    if (diff_pixels(left, y1, right, y2) < 30)
       return 0
     else
       return 1
@@ -122,28 +122,28 @@ class InstagramChallenge
   end
 
 
-  def diffLeftAgainstOtherColumns(leftColumn)
+  def diff_left_against_other_columns(leftColumn)
     diffs = []
     @rightXs.each do |rightColumn|
-      #diffs.push(diffColumns(leftColumn, rightColumn))
-      #diffs.push(averageOf2DiffColumns(leftColumn, rightColumn))
-      #diffs.push(smoothChangeDiffColumns(leftColumn, rightColumn))
-      diffs.push(underThresholdDiffColumns(leftColumn, rightColumn))
+      #diffs.push(diff_columns(leftColumn, rightColumn))
+      #diffs.push(average_of_2_diff_columns(leftColumn, rightColumn))
+      #diffs.push(smooth_changed_diff_columns(leftColumn, rightColumn))
+      diffs.push(under_threshold_diff_columns(leftColumn, rightColumn))
     end
     return diffs
   end
 
   # Returns Array containing an element for each left column where the element is
   # an array of values of that column compared against all right columns
-  def diffAllColumns()
+  def diff_all_columns()
     diffs = []
     @leftXs.each do |leftColumn|
-      diffs.push(diffLeftAgainstOtherColumns(leftColumn))
+      diffs.push(diff_left_against_other_columns(leftColumn))
     end
     return diffs
   end
 
-  def prettyPrint2DArray(array)
+  def pretty_print_2d_array(array)
     puts "["
     array.each_index do |yIndex|
       lineString = yIndex.to_s() + "["
@@ -156,7 +156,7 @@ class InstagramChallenge
     puts "]"
   end
 
-  def findIndexOfSmallestNonNegativeNumber(array)
+  def find_index_of_smallest_non_negative_number(array)
     minIndex = -1
     minValue = -1
     array.each_index do |index|
@@ -171,7 +171,7 @@ class InstagramChallenge
     return minIndex
   end
 
-  def indexOfRowWithLargestMinimum(twoDArray)
+  def index_of_row_with_largest_minimum(twoDArray)
     largestMinimum = -1000000
     largestIndex = -1;
     twoDArray.each_with_index do | oneDArray, index|
@@ -189,11 +189,11 @@ class InstagramChallenge
     return largestIndex
   end
 
-  def detectLeftColumnOfImage(twoDArray)
-    return indexOfRowWithLargestMinimum(twoDArray)
+  def detect_left_column_of_image(twoDArray)
+    return index_of_row_with_largest_minimum(twoDArray)
   end
 
-  def indexOfBestLHCForRHC(rhcIndex, twoDArray, excludedIndices)
+  def index_of_best_left_hand_column_for_right_hand_column(rhcIndex, twoDArray, excludedIndices)
     smallestDiff = 1000000000
     smallestIndex = -1
     twoDArray.each_with_index do |oneDArray, index|
@@ -208,42 +208,42 @@ class InstagramChallenge
     return smallestIndex
   end
 
-  def getOrderOfColumns(twoDArray)
+  def get_order_of_columns(twoDArray)
     order = []
-    leftCol = detectLeftColumnOfImage(twoDArray)
+    leftCol = detect_left_column_of_image(twoDArray)
     order << leftCol
     (1..twoDArray.length - 1).each do |index|
-      leftCol = indexOfBestLHCForRHC(leftCol, twoDArray, order)
+      leftCol = index_of_best_left_hand_column_for_right_hand_column(leftCol, twoDArray, order)
       order << leftCol
     end
     return order
   end
 
-  def createNewImage()
+  def create_new_image()
     @outputImage = OutputImage.new(@image.width(), @image.height())
   end
 
-  def writeCorrectImageToOutput(orderOfColumns)
+  def write_correct_image_to_output(orderOfColumns)
     outputX = 0
     orderOfColumns.each do | columnFromOrig |
-      copySectionFromInputToOutput(columnFromOrig, outputX)
+      copy_section_from_input_to_output(columnFromOrig, outputX)
       outputX += @columnWidths[columnFromOrig]
     end
   end
 
-  def saveOutputImage()
+  def save_output_image()
     @outputImage.save(@outputLocation)
   end
 
-  def copyColumnFromInputToOutput(inputX, outputX)
+  def copy_column_from_input_to_output(inputX, outputX)
     (0...@image.height).each do |y|
-      @outputImage.writePixel(outputX, y, @image.getPixel(inputX, y))
+      @outputImage.write_pixel(outputX, y, @image.get_pixel(inputX, y))
     end
   end
 
-  def copySectionFromInputToOutput(inputSection, outputStartingX)
+  def copy_section_from_input_to_output(inputSection, outputStartingX)
     (0...@columnWidths[inputSection]).each do |x|
-      copyColumnFromInputToOutput(@leftXs[inputSection] + x, outputStartingX + x)
+      copy_column_from_input_to_output(@leftXs[inputSection] + x, outputStartingX + x)
     end
   end
 
@@ -251,10 +251,10 @@ class InstagramChallenge
 end
 
 chall = InstagramChallenge.new("./challenge.png")
-chall.setOutputLocation("./output.png")
-chall.calculateColumns()
-columnDiffs = chall.diffAllColumns()
-order = chall.getOrderOfColumns(columnDiffs)
-chall.createNewImage()
-chall.writeCorrectImageToOutput(order)
-chall.saveOutputImage()
+chall.set_output_location("./output.png")
+chall.calculate_columns()
+columnDiffs = chall.diff_all_columns()
+order = chall.get_order_of_columns(columnDiffs)
+chall.create_new_image()
+chall.write_correct_image_to_output(order)
+chall.save_output_image()

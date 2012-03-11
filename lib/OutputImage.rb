@@ -9,7 +9,7 @@ class OutputImage
     @png.save(location)
   end
 
-  def writePixel(x, y, value)
+  def write_pixel(x, y, value)
     @png[x, y,] = value
   end
 end
