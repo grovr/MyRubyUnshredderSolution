@@ -177,9 +177,7 @@ class InstagramChallenge
     twoDArray.each_with_index do | oneDArray, index|
       minOfArray = 10000000
       oneDArray.each_with_index do | diff, oneDIndex |
-        if (index != oneDIndex)
-          minOfArray = [minOfArray, diff].min
-        end
+      minOfArray = [minOfArray, diff].min if index != oneDIndex
       end
       if (largestMinimum < minOfArray)
         largestMinimum = minOfArray
