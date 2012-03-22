@@ -2,9 +2,22 @@ require_relative 'OutputImage.rb'
 require_relative 'InputImage.rb'
 
 class InstagramChallenge
-  def initialize(filename)
-    @image = InputImage.new filename
-    @outputLocation = "rearranged.png"
+  def initialize()
+    @image = InputImage.new("challenge.png")
+    @outputLocation = "output.png"
+  end
+
+  def set_input_image(location)
+    @image = InputImage.new location
+  end
+
+  def perform_unshredding()
+    calculate_columns()
+    columnDiffs = diff_all_columns()
+    order = get_order_of_columns(columnDiffs)
+    create_new_image()
+    write_correct_image_to_output(order)
+    save_output_image()
   end
 
   def set_output_location(location)
@@ -248,11 +261,5 @@ class InstagramChallenge
   #TODO need columnWidths to be set
 end
 
-chall = InstagramChallenge.new("./challenge.png")
-chall.set_output_location("./output.png")
-chall.calculate_columns()
-columnDiffs = chall.diff_all_columns()
-order = chall.get_order_of_columns(columnDiffs)
-chall.create_new_image()
-chall.write_correct_image_to_output(order)
-chall.save_output_image()
+chall = InstagramChallenge.new
+chall.perform_unshredding()

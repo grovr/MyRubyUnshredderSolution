@@ -6,8 +6,9 @@ require 'chunky_png'
 
 describe InstagramChallenge do
 
-  before(:each) do
-    @instagramChallenge = InstagramChallenge.new "./test.png"
+  before(:each) do ||
+    @instagramChallenge = InstagramChallenge.new
+    @instagramChallenge.set_input_image("./test.png")
   end
 
   it "should have a set_output_location function to set the output location" do
