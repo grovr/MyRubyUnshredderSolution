@@ -1,5 +1,6 @@
 require_relative 'OutputImage.rb'
 require_relative 'InputImage.rb'
+require_relative 'UnderThresholdColumnComparisonStrategy'
 
 class InstagramChallenge
   def initialize()
@@ -137,11 +138,12 @@ class InstagramChallenge
 
   def diff_left_against_other_columns(leftColumn)
     diffs = []
+    columnComparisonStrategy = UnderThresholdColumnComparisonStrategy.new
     @rightXs.each do |rightColumn|
       #diffs.push(diff_columns(leftColumn, rightColumn))
       #diffs.push(average_of_2_diff_columns(leftColumn, rightColumn))
       #diffs.push(smooth_changed_diff_columns(leftColumn, rightColumn))
-      diffs.push(under_threshold_diff_columns(leftColumn, rightColumn))
+      diffs.push(columnComparisonStrategy.computeDifference(@image, leftColumn, rightColumn))
     end
     return diffs
   end
