@@ -46,104 +46,12 @@ class InstagramChallenge
       @rightXs.push(rightX)
     end
   end
-
-  def rearrange
-    @image.save @outputLocation
-  end
-
-  def swap_columns(first, second)
-    (0...@image.height).each do |y|
-      @image.swap_pixels(first, y, second, y)
-    end
-  end
-
-  def diff_pixels(x1, y1, x2, y2)
-    first = @image.get_pixel_value(x1, y1)
-    second = @image.get_pixel_value(x2, y2)
-    diff = 0
-    (0...first.length).each do |index|
-      diff += (first[index] - second[index]).abs
-    end
-    return diff
-  end
-
-  def diff_columns(x1, x2)
-    diff = 0
-    (0...@image.height).each do |y|
-      diff += diff_pixels(x1, y, x2, y)
-    end
-    return diff
-  end
-
-  def average_of_2_diff_columns(x1, x2)
-    diff = 0
-    (0...(@image.height - 1)).each do |y|
-      diff += diff_pixels(x1, y, x2, y)
-    end
-    return diff
-  end
-
-  def average_of_2_diff_pixels(x1, y1, x2, y2)
-    first1 = @image.get_pixel_value(x1, y1)
-    first2 = @image.get_pixel_value(x1 + 1, y1)
-    firstAverage = average_2_pixels_values(first1, first2)
-    second1 = @image.get_pixel_value(x2, y2)
-    second2 = @image.get_pixel_value(x2 + 1, y2)
-    secondAverage = average_2_pixels_values(second1, second2)
-    diff = 0
-    (0...firstAverage.length).each do |index|
-      diff += (firstAverage[index] - secondAverage[index]).abs
-    end
-    return diff
-  end
-
-  def average_2_pixels_values(value1, value2)
-    averageValue = []
-    (0..value1.length).each do |index|
-      averageValue.push((value1[index] + value2[index]) / 2)
-    end
-    return averageValue
-  end
-
-  def smooth_changed_diff_columns(left, right)
-    diff = 0
-    (0...@image.height).each do |y|
-      diff += smooth_changed_diff_pixels(left, y, right, y)
-    end
-    return diff
-  end
-
-  def smooth_changed_diff_pixels(left, y1, right, y2)
-    leftChange = diff_pixels(left, y1, left+1, y1)
-    rightToLeftChange = diff_pixels(left, y1, right, y2)
-    return (leftChange - rightToLeftChange).abs
-  end
-
-  def under_threshold_diff_columns(left, right)
-    diff = 0
-    (0...@image.height).each do |y|
-      diff += under_threshold_diff_pixels(left, y, right, y)
-    end
-    return diff
-  end
-
-  def under_threshold_diff_pixels(left, y1, right, y2)
-    if (diff_pixels(left, y1, right, y2) < 30)
-      return 0
-    else
-      return 1
-    end
-  end
-
-
+  
   def diff_left_against_other_columns(leftColumn)
     diffs = []
     columnComparisonStrategy = UnderThresholdColumnComparisonStrategy.new
     @rightXs.each do |rightColumn|
-      #diffs.push(diff_columns(leftColumn, rightColumn))
-      #diffs.push(average_of_2_diff_columns(leftColumn, rightColumn))
-      #diffs.push(smooth_changed_diff_columns(leftColumn, rightColumn))
-      diffs.push(columnComparisonStrategy.computeDifference(@image, leftColumn, rightColumn))
+      diffs.push(columnComparisonStrategy.compute_difference(@image, leftColumn, rightColumn))
     end
     return diffs
   end
@@ -156,19 +64,6 @@ class InstagramChallenge
       diffs.push(diff_left_against_other_columns(leftColumn))
     end
     return diffs
-  end
-
-  def pretty_print_2d_array(array)
-    puts "["
-    array.each_index do |yIndex|
-      lineString = yIndex.to_s() + "["
-      array[yIndex].each_index do |xIndex|
-        lineString += array[yIndex][xIndex].to_s + ","
-      end
-      lineString += "]"
-      puts lineString
-    end
-    puts "]"
   end
 
   def find_index_of_smallest_non_negative_number(array)

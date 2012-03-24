@@ -2,7 +2,7 @@ require_relative "ColumnComparisonStrategy.rb"
 require_relative 'InputImage.rb'
 
 class UnderThresholdColumnComparisonStrategy < ColumnComparisonStrategy
-  def computeDifference(image, leftColumn, rightColumn)
+  def compute_difference(image, leftColumn, rightColumn)
     @image = image
     diff = 0
     (0...@image.height).each do |y|

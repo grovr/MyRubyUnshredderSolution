@@ -1,6 +1,6 @@
 
 class ColumnComparisonStrategy
-  def computeDifference(image, leftColumn, rightColumn)
+  def compute_difference(image, leftColumn, rightColumn)
   end
 
   def diff_pixels(x1, y1, x2, y2)

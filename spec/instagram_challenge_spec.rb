@@ -15,38 +15,6 @@ describe InstagramChallenge do
     @instagramChallenge.set_output_location("./output.png")
   end
 
-  it "should have a function to invoke rearranging the photo" do
-    @instagramChallenge.rearrange
-  end
-
-  it "should write to the output file in rearrange" do
-    outputFileName = "./output.png"
-    if File.exists?(outputFileName)
-      File.delete(outputFileName)
-    end
-    @instagramChallenge.set_output_location(outputFileName)
-    @instagramChallenge.rearrange
-    File.exists?(outputFileName).should be_true
-  end
-
-  it "should be able to swap 2 columns of it's image" do
-    @instagramChallenge.swap_columns(0, 9)
-    (0...5).each do |y|
-      @instagramChallenge.instance_variable_get(:@image).get_pixel_value(0, y).should ==([255, 0, 255, 255])
-      @instagramChallenge.instance_variable_get(:@image).get_pixel_value(9, y).should ==([0, 255, 255, 255])
-    end
-  end
-
-    it "should be able to diff 2 pixels" do
-    @instagramChallenge.diff_pixels(0, 0, 9, 4).should ==(255 + 255)
-    @instagramChallenge.diff_pixels(0, 0, 0, 1).should ==(0)
-  end
-
-  it "should be able to diff 2 columns" do
-    @instagramChallenge.diff_columns(0, 9).should == (5*(255+255))
-    @instagramChallenge.diff_columns(0, 1).should == (0)
-  end
-
   it "should be able to diff a column against all others as defined by column widths" do
     @instagramChallenge.calculate_columns_from_widths([5,5])
     firstLeft = @instagramChallenge.instance_variable_get(:@leftXs)[0]
