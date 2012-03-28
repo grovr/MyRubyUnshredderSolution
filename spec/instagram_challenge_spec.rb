@@ -55,6 +55,14 @@ describe InstagramChallenge do
     @instagramChallenge.get_order_of_columns([[333, 4, 5], [2, 555, 6], [1, 8, 999]]).should == ([0,2,1])
     @instagramChallenge.get_order_of_columns([[333, 6, 2], [1, 555, 9], [7, 7, 999]]).should == ([2,0,1])
   end
+
+  it "should produce the correct order for the tokyo skyline image" do
+    @instagramChallenge.set_input_image("./challenge.png")
+    @instagramChallenge.calculate_columns()
+    columnDiffs = @instagramChallenge.diff_all_columns()
+    order = @instagramChallenge.get_order_of_columns(columnDiffs)
+    order.should == ([8, 10, 14, 16, 18, 13, 7, 3, 2, 11, 4, 19, 17, 12, 6, 15, 1, 5, 0, 9])
+  end
 end
 
 describe InputImage do
